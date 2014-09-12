@@ -1,0 +1,53 @@
+{
+  "provisioners": [
+    {
+      "type": "shell",
+      "scripts": [
+        "scripts/root_setup.sh"
+      ],
+      "override": {
+        "virtualbox-iso": {
+          "execute_command": "echo 'cfadmin' | sudo -S sh '{{ .Path }}'"
+        }
+      }
+    }
+  ],
+  "builders": [
+    {
+      "type": "virtualbox-iso",
+      "boot_command": [
+        "<enter><enter><esc><enter> <wait>",
+        "/casper/vmlinuz.efi url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg ",
+        "hostname={{ .Name }} ",
+        " initrd=/casper/initrd.lz boot=casper automatic-ubiquity noprompt --<enter><wait>"
+      ],
+      "boot_wait": "4s",
+      "headless": false,
+      "guest_additions_mode": "disable",
+      "guest_os_type": "Ubuntu_64",
+      "http_directory": "http",
+      "iso_checksum": "119cb63b48c9a18f31f417f09655efbd",
+      "iso_checksum_type": "none",
+      "iso_url": "/Users/dings/Downloads/ubuntu-14.04.1-desktop-amd64.iso",
+      "ssh_username": "cfadmin",
+      "ssh_password": "cfadmin",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "10000s",
+      "shutdown_command": "echo 'shutdown -P now' > shutdown.sh; echo 'cfadmin'|sudo -S sh 'shutdown.sh'",
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          "2048"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          "2"
+        ]
+      ]
+    }
+  ]
+}
